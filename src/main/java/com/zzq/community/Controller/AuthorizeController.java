@@ -2,8 +2,8 @@ package com.zzq.community.Controller;
 
 import com.zzq.community.Mapper.UserMapper;
 import com.zzq.community.model.User;
-import com.zzq.community.pojo.AccessToken;
-import com.zzq.community.pojo.GithubUser;
+import com.zzq.community.dto.AccessTokenDTO;
+import com.zzq.community.dto.GithubUser;
 import com.zzq.community.prbvider.GithubProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -47,16 +47,16 @@ public class AuthorizeController {
                            @RequestParam(name = "state") String  state,
                            HttpServletRequest request,
                            HttpServletResponse response){
-        AccessToken accessToken = new AccessToken();
-        accessToken.setClient_id(clientId);
-        accessToken.setClient_secret(clientSecret);
-        accessToken.setCode(code);
-        accessToken.setRedirect_uri(redirectUri);
-        accessToken.setState(state);
-        String accessToken2 =  githubProvider.getAccessToken(accessToken);
+        AccessTokenDTO accessTokenDTO = new AccessTokenDTO();
+        accessTokenDTO.setClient_id(clientId);
+        accessTokenDTO.setClient_secret(clientSecret);
+        accessTokenDTO.setCode(code);
+        accessTokenDTO.setRedirect_uri(redirectUri);
+        accessTokenDTO.setState(state);
+        String accessToken2 =  githubProvider.getAccessToken(accessTokenDTO);
         GithubUser githubUser = githubProvider.getUser(accessToken2);
 //        System.out.println(githubUser.getName());
-        if (githubUser != null){
+        if (githubUser != null && githubUser.getId() != null){
             User user = new User();
             String token = UUID.randomUUID().toString();
             user.setToken(token);
@@ -65,6 +65,7 @@ public class AuthorizeController {
 //            System.currentTimeMillis()获取当前时间
             user.setGmtCreate(System.currentTimeMillis());
             user.setGmtModified(user.getGmtCreate());
+            user.setAvatarUrl(githubUser.getAvatarUrl());
             userMapper.insert(user);
             /**
              * Cookie和Session的区别

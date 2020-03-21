@@ -1,8 +1,8 @@
 package com.zzq.community.prbvider;
 
 import com.alibaba.fastjson.JSON;
-import com.zzq.community.pojo.AccessToken;
-import com.zzq.community.pojo.GithubUser;
+import com.zzq.community.dto.AccessTokenDTO;
+import com.zzq.community.dto.GithubUser;
 import okhttp3.*;
 import org.springframework.stereotype.Component;
 
@@ -10,10 +10,10 @@ import java.io.IOException;
 
 @Component
 public class GithubProvider {
-    public String getAccessToken(AccessToken accessToken){
+    public String getAccessToken(AccessTokenDTO accessTokenDTO){
         MediaType mediaType = MediaType.get("application/json; charset=utf-8");
         OkHttpClient client = new OkHttpClient();
-        RequestBody body = RequestBody.create(JSON.toJSONString(accessToken), mediaType);
+        RequestBody body = RequestBody.create(JSON.toJSONString(accessTokenDTO), mediaType);
         Request request = new Request.Builder()
                 .url("https://github.com/login/oauth/access_token")
                 .post(body)
