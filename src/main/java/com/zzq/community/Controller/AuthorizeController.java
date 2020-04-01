@@ -1,10 +1,10 @@
 package com.zzq.community.Controller;
 
-import com.zzq.community.Mapper.UserMapper;
 import com.zzq.community.model.User;
 import com.zzq.community.dto.AccessTokenDTO;
 import com.zzq.community.dto.GithubUser;
 import com.zzq.community.prbvider.GithubProvider;
+import com.zzq.community.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
@@ -24,7 +24,7 @@ public class AuthorizeController {
     @Autowired
     private GithubProvider githubProvider;
     @Autowired
-    private UserMapper userMapper;
+    private UserService userService;
 
 
 //    将配置文件中的信息导入Controller中
@@ -62,11 +62,8 @@ public class AuthorizeController {
             user.setToken(token);
             user.setName(githubUser.getName());
             user.setAccountId(String.valueOf(githubUser.getId()));
-//            System.currentTimeMillis()获取当前时间
-            user.setGmtCreate(System.currentTimeMillis());
-            user.setGmtModified(user.getGmtCreate());
             user.setAvatarUrl(githubUser.getAvatarUrl());
-            userMapper.insert(user);
+            userService.createOrUpdate(user);
             /**
              * Cookie和Session的区别
              * cookie是存储在本地浏览器
@@ -87,12 +84,20 @@ public class AuthorizeController {
 //            request.getSession().setAttribute("user",githubUser);
 //            如果想要重定向成功需要填写的是路径而不是html文件的名字
             return "redirect:/";
-
-
         }else {
             //登录失败，重新登录
             return "redirect:/";
         }
+    }
 
+    @GetMapping("/logout")
+    public String logout(HttpServletRequest request,
+                         HttpServletResponse response){
+        request.getSession().removeAttribute("user");
+        Cookie cookie = new Cookie("token", null);
+        cookie.setMaxAge(0);
+        response.addCookie(cookie);
+
+        return "redirect:/";
     }
 }

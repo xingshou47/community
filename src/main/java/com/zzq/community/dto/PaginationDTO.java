@@ -1,6 +1,5 @@
 package com.zzq.community.dto;
 
-import com.zzq.community.model.Question;
 import lombok.Data;
 
 import java.util.ArrayList;
@@ -16,13 +15,8 @@ public class PaginationDTO {
     private List<Integer> pages = new ArrayList<>();
     private int totalPage;
 
-    public void setPagination(Integer totalCount, Integer page, Integer size) {
-        if (totalCount % size == 0){
-            totalPage = totalCount/size;
-        }else {
-            totalPage = totalCount/size +1;
-        }
-
+    public void setPagination(Integer totalPage, Integer page) {
+        this.totalPage =totalPage;
         this.page = page;
 
         pages.add(page);
@@ -31,7 +25,7 @@ public class PaginationDTO {
                 pages.add(0,page-i);
             }
 
-            if (page +i <= totalPage){
+            if (page +i <= this.totalPage){
                 pages.add(page+i);
             }
         }
@@ -41,7 +35,7 @@ public class PaginationDTO {
         }else {
             showPrevious =true;
         }
-        if (page == totalPage){
+        if (page == this.totalPage){
             showNext = false;
         }else {
             showNext =true;
@@ -53,7 +47,7 @@ public class PaginationDTO {
             showFirstPage = true;
         }
 
-        if (pages.contains(totalPage)){
+        if (pages.contains(this.totalPage)){
             showEndPage = false;
         }else {
             showEndPage = true;
