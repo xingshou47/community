@@ -1,7 +1,5 @@
 package com.zzq.community.Controller;
 
-import com.zzq.community.Mapper.QuestionMapper;
-import com.zzq.community.Mapper.UserMapper;
 import com.zzq.community.dto.QuestionDTO;
 import com.zzq.community.model.Question;
 import com.zzq.community.model.User;
@@ -22,7 +20,7 @@ public class PublishController {
     private QuestionService questionService;
 
     @GetMapping("/publish/{id}")
-    public String update(@PathVariable(name = "id") int id,
+    public String update(@PathVariable(name = "id") Long id,
                          Model model){
         QuestionDTO questionDTO = questionService.GetById(id);
         model.addAttribute("title",questionDTO.getTitle());
@@ -42,7 +40,7 @@ public class PublishController {
             @RequestParam("title") String title,
             @RequestParam("description") String description,
             @RequestParam("tag") String tag,
-            @RequestParam(value = "id" ,required = false) int id,
+            @RequestParam(value = "id" ,required = false) Long id,
             HttpServletRequest request,
             Model model
     ) {

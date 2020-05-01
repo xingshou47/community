@@ -1,10 +1,12 @@
 package com.zzq.community.service;
 
-import ch.qos.logback.core.net.SyslogOutputStream;
+import com.zzq.community.Mapper.QuestionExtMapper;
 import com.zzq.community.Mapper.QuestionMapper;
 import com.zzq.community.Mapper.UserMapper;
 import com.zzq.community.dto.PaginationDTO;
 import com.zzq.community.dto.QuestionDTO;
+import com.zzq.community.exception.CustomizeErrorCode;
+import com.zzq.community.exception.CustomizeException;
 import com.zzq.community.model.Question;
 import com.zzq.community.model.QuestionExample;
 import com.zzq.community.model.User;
@@ -22,6 +24,9 @@ public class QuestionService {
     private UserMapper userMapper;
     @Autowired
     private QuestionMapper questionMapper;
+    @Autowired
+    private QuestionExtMapper questionExtMapper;
+
 //    这个是进行分页的功能的实现
     public PaginationDTO list(Integer page, Integer size) {
         //这是再传输过程中的问题的实体类 除了问题List的集合 还有关于分页的属性
@@ -60,7 +65,7 @@ public class QuestionService {
         return paginationDTO;
     }
 
-    public PaginationDTO list(Integer userId, Integer page, Integer size) {
+    public PaginationDTO list(Long userId, Integer page, Integer size) {
         //这是再传输过程中的问题的实体类 除了问题List的集合 还有关于分页的属性
         PaginationDTO paginationDTO = new PaginationDTO();
         Integer totalPage;
@@ -102,8 +107,11 @@ public class QuestionService {
         return paginationDTO;
     }
 
-    public QuestionDTO GetById(int id) {
+    public QuestionDTO GetById(Long id) {
         Question question = questionMapper.selectByPrimaryKey(id);
+        if (question == null){
+            throw new CustomizeException(CustomizeErrorCode.QUESTION_NOT_FOUND);
+        }
         QuestionDTO questionDTO = new QuestionDTO();
         BeanUtils.copyProperties(question,questionDTO);
         User user = userMapper.selectByPrimaryKey(question.getCreator());
@@ -111,12 +119,12 @@ public class QuestionService {
         return questionDTO;
     }
 
+    //创建信息和更新问题出现问题
     public void createOrUpdate(Question question) {
-        Integer qId = question.getId();
-        if ( qId == null){
+        if ( question.getId() == null){
             question.setGmtCreate(System.currentTimeMillis());
             question.setGmtModified(question.getGmtCreate());
-            questionMapper.insert(question);
+            questionMapper.insertSelective(question);
         }else {
             question.setGmtModified(System.currentTimeMillis());
             Question updateQuestion = new Question();
@@ -128,8 +136,17 @@ public class QuestionService {
             QuestionExample questionExample = new QuestionExample();
             questionExample.createCriteria()
                     .andCreatorEqualTo(question.getId());
-            questionMapper.updateByExample(updateQuestion, questionExample);
+           int update = questionMapper.updateByExample(updateQuestion, questionExample);
+            if (update != 1){
+                throw new CustomizeException(CustomizeErrorCode.QUESTION_NOT_FOUND);
+            }
         }
     }
 
+    public void inView(Long id) {
+        Question question = new Question();
+        question.setId(id);
+        question.setViewCount(1);
+        questionExtMapper.incView(question);
+    }
 }

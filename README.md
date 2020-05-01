@@ -18,6 +18,7 @@
 Git
 [visual-paradigm](https://www.visual-paradigm.com/cn/download/community.jsp?platform=windows&arch=64bit)
 [Postman](https://www.postman.com/)
+[ApiPost](https://www.apipost.cn/)
 
 mvn -Dmybatis.generator.overwrite=true mybatis-generator:generate
 

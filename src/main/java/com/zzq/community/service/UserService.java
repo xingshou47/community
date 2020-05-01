@@ -13,6 +13,7 @@ public class UserService {
     @Autowired
     private UserMapper userMapper;
 
+    //创建或更新数据库中的用户信息
     public void createOrUpdate(User user) {
         UserExample userExample = new UserExample();
         userExample.createCriteria()
