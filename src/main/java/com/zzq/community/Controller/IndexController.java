@@ -1,6 +1,6 @@
 package com.zzq.community.Controller;
 
-import com.zzq.community.dto.PaginationDTO;
+import com.zzq.community.dto.QuestionPaginationDTO;
 import com.zzq.community.service.QuestionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -19,13 +19,11 @@ public class IndexController {
     public String index(HttpServletRequest request,
                         Model model,
                         @RequestParam(name ="page",defaultValue = "1") Integer page,
-                        @RequestParam(name ="size",defaultValue = "5") Integer size
+                        @RequestParam(name ="size",defaultValue = "10") Integer size
                         ){
-
         //获取列表信息
-        PaginationDTO pagination = questionService.list(page,size);
+        QuestionPaginationDTO pagination = questionService.list(page,size);
         model.addAttribute("pagination",pagination);
-
         return "index";
     }
 }

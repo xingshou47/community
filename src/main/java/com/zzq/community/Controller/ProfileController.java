@@ -1,7 +1,6 @@
 package com.zzq.community.Controller;
 
-import com.zzq.community.Mapper.UserMapper;
-import com.zzq.community.dto.PaginationDTO;
+import com.zzq.community.dto.QuestionPaginationDTO;
 import com.zzq.community.model.User;
 import com.zzq.community.service.QuestionService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,7 +36,7 @@ public class ProfileController {
             model.addAttribute("section","replies");
             model.addAttribute("sectionName","最新回复");
         }
-        PaginationDTO paginationDTO = questionService.list(user.getId(), page, size);
+        QuestionPaginationDTO paginationDTO = questionService.list(user.getId(), page, size);
         model.addAttribute("pagination",paginationDTO );
         return "profile";
     }
